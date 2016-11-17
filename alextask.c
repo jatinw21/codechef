@@ -2,20 +2,31 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#define LONG_MAX 9223372036854775807
+
+// by eucleadian theorem gcd(a,b)=gcd(b,r) where a =b*q +r , so a%b = r
+long long gcd(long long a, long long b) {
+    if(b == 0) {
+        return a;
+    } else {
+        return(gcd(b,a%b));
+    }
+}
+
+long long lcm(long long a, long long b) {
+    return (a*b)/gcd(a,b);
+}
 
 int main(int argc, char *argv[]) {
-    int T;
+    int T, i, j, k, l, N;
     scanf("%d", &T);
     // DEBUG
     // printf("T: %d\n",T); // we get num of test cases
-    int i, j, k;
-    int N;
-    long long lcm;
-    int numDiv = 0;
+
+    long long minLcm, m;
     // for each test cases
     // get N then get all N's from next line, solve it
     for (i = 0; i < T; i++) {
-        lcm = 1;
         scanf("%d", &N);
         // DEBUG
         // printf("N: %d\n", N);
@@ -29,33 +40,17 @@ int main(int argc, char *argv[]) {
         // printf("\n");
 
         // After getting all N's, now we do actual stuff
-        // smallest number that divides two numbers out of given N's is our answer
-        // so check foreach N if LCM % N is 0. when it reaches 2, break and lcm is answer
-        bool lcmNotFound = true;
-        while (lcmNotFound) {
-            // printf("Inside while loop\n");
-            // printf("Going into for loop\n");
-            for (k = 0; k < N; k++) {
-                // printf("Checking if %d is divided by %d\n",lcm,times[k] );
-                if (lcm % times[k] == 0) {
-                    // printf("%d is divisible by %d\n",lcm,times[k]);
-                    // printf("Incrementing numDiv now. Rn it is %d\n",numDiv );
-                    numDiv++;
-                    // printf("Now it is %d\n",numDiv );
-                    if (numDiv == 2) {
-                        // printf("numDiv == 2 so print lcm and break\n");
-                        printf("%lld\n", lcm);
-                        lcmNotFound = false;
-                        // printf("Should go outside loop now\n");
-                        break;
-                    }
+        // the smallest lcm of any two numbers is our solution.
+        minLcm = LONG_MAX;
+        for (k = 0; k < N-1; k++) {
+            for (l = k+1; l < N; l++) {
+                m = lcm(times[k],times[l]);
+                if (m < minLcm) {
+                    minLcm = m;
                 }
             }
-            if(!lcmNotFound) break;
-            lcm++;
-            numDiv = 0;
         }
-
+        printf("%lld\n",minLcm);
 
     }
     return 0;
